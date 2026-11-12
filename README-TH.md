@@ -1,0 +1,147 @@
+# Focus Party — Yii2 API + React (โปรเจกต์เดียวจบ)
+
+```
+focus-party/
+├── components/Rules.php   ← สูตรเกมทั้งหมด (EXP, ระยะต้นไม้, บอส, เวลาพัก)
+├── controllers/           ← API ทุกตัว (/api/...)
+├── models/                ← User, Room, RoomMember, Boss, RoomMessage, FriendRequest, Garden
+├── migrations/            ← สร้างตาราง + ข้อมูลตัวอย่าง
+├── config/web.php         ← URL ของ API ทั้งหมด
+├── web/                   ← index.php ของ Yii + React ที่ build แล้ว (ต้อง commit)
+└── frontend/              ← โค้ด React
+```
+
+## บัญชีตัวอย่าง (หลังรัน migrate)
+
+| ชื่อผู้ใช้ | รหัส | ใช้โชว์อะไร |
+|---|---|---|
+| `admin` | `Admin1234` | แอดมิน Lv.30 ปรับเลเวลตัวเองได้ เข้าห้องบอสได้ |
+| `focus_demo1` | `Focus1234` | Lv.7 สวน 14 ต้น (2 แปลง มีต้นตาย 1 ต้น) มีเพื่อน มีคำขอเป็นเพื่อนรออยู่ |
+| `focus_demo2` | `Focus1234` | เพื่อนของ demo1 · โฮสต์ห้องโหมดโฟกัส (ปิดแชท) |
+| `focus_demo3` | `Focus1234` | Lv.32 โฮสต์ห้องบอส Baby Pest กับห้องมีแชท + เวลาพัก |
+| `focus_demo4` | `Focus1234` | ปิดรับคำขอเป็นเพื่อน |
+
+---
+
+## 1. รันในเครื่องตัวเอง (XAMPP)
+
+ต้องมี: PHP 8.2+, MariaDB/MySQL, Composer, Node.js
+
+```bash
+# 1) ติดตั้ง
+composer install
+cd frontend && npm install && cd ..
+
+# 2) สร้างฐานข้อมูลชื่อ focus_party (ใน phpMyAdmin ก็ได้) แล้วก๊อป .env
+copy .env.example .env        # Mac/Linux: cp .env.example .env
+#    แก้ DB_USERNAME / DB_PASSWORD ใน .env ให้ตรงกับเครื่อง (XAMPP ปกติ root ไม่มีรหัส)
+
+# 3) สร้างตาราง + ข้อมูลตัวอย่าง
+php yii migrate
+
+# 4) เปิด API
+php yii serve --port=8080
+```
+
+อีกหน้าต่าง terminal:
+
+```bash
+cd frontend
+npm run dev
+```
+
+เปิด http://localhost:5173
+
+- `npm run dev` ใช้ **ข้อมูลจำลอง (mock)** เป็นค่าเริ่มต้น ถ้าจะต่อ API จริงที่เปิดไว้ ให้สร้างไฟล์ `frontend/.env` ใส่
+  `VITE_USE_MOCK=false` แล้วรัน `npm run dev` ใหม่
+- XAMPP บน Windows ถ้าพิมพ์ `php` ไม่ได้ ให้ใช้ `C:\xampp\php\php.exe` แทน เช่น `C:\xampp\php\php.exe yii migrate`
+
+## 2. Build React (ทุกครั้งที่แก้หน้าเว็บ)
+
+```bash
+cd frontend
+npm run build
+```
+
+ไฟล์ไปอยู่ใน `web/` (`web/index.html`, `web/app/`, รูป, เพลง) **ต้อง commit ด้วย** เพราะเซิร์ฟเวอร์ไม่มี Node
+`npm run build` ต่อ API จริงเองอัตโนมัติ
+
+## 3. Deploy ขึ้นเซิร์ฟเวอร์วิชา
+
+```bash
+git add .
+git commit -m "Focus Party v2"
+git push deploy main
+```
+
+บนเซิร์ฟเวอร์ต้องมี:
+1. ไฟล์ `.env` (ไม่ได้ขึ้น git) ใส่รหัสฐานข้อมูลของเซิร์ฟเวอร์ และ**ไม่ต้องใส่** `APP_ENV=dev`
+2. `composer install --no-dev` ถ้าเซิร์ฟเวอร์ไม่รันให้ตอน push
+3. `php yii migrate --interactive=0` ถ้าเซิร์ฟเวอร์ไม่รันให้ตอน push
+
+ถ้าฐานข้อมูลบนเซิร์ฟเวอร์มีตารางเก่าของเพื่อนอยู่แล้ว ไม่เป็นไร migrate จะเพิ่มเฉพาะ 2 ตัวใหม่
+(`m261112_120000_focus_party_v2` กับ `m261112_120100_seed_focus_party_v2`) ข้อมูลเดิมไม่หาย
+
+`web/.htaccess` ตั้งไว้แล้ว: `/api/...` ไป Yii, ไฟล์จริงเปิดตรง, หน้าอื่นไป React (รีเฟรช `/room/5` ไม่ 404)
+
+### เช็คหลัง deploy
+- [ ] เปิด `/api/test` เห็น `Focus Party API is running!`
+- [ ] หน้า Login ไม่มีบรรทัด "Mock mode"
+- [ ] ล็อกอิน `admin` / `Admin1234` ได้ แล้วเปิดห้อง → อีกเครื่องจอยได้ → เริ่ม → แชทเห็นกัน
+- [ ] รีเฟรชหน้าห้อง / สวน ไม่ขึ้น 404
+
+---
+
+## API ทั้งหมด
+
+ทุกคำตอบเป็น `{"data": ...}` · error เป็น `{"message": "...", "errors": {"ช่อง": ["ข้อความ"]}}` · เวลาเป็น unix วินาที
+ทุกตัวยกเว้น register / login / test ต้องส่ง `Authorization: Bearer <token>`
+
+| Method | URL | ทำอะไร |
+|---|---|---|
+| GET | `/api/test` | เช็คว่า API ทำงาน |
+| POST | `/api/auth/register` | สมัคร `{username, password, display_name}` |
+| POST | `/api/auth/login` | ล็อกอิน (ใช้ token เดิม เข้าหลายเครื่องได้) |
+| GET | `/api/me` | ข้อมูลตัวเอง |
+| PUT | `/api/me/avatar` | บันทึกตัวละคร + สัตว์เลี้ยง |
+| PUT | `/api/me/settings` | `allow_friend_requests`, `garden_theme` |
+| GET | `/api/me/garden` | ต้นไม้ในสวน |
+| POST | `/api/me/garden/water` | รดน้ำทุกต้น |
+| PUT | `/api/me/garden/{room_id}` | ตั้งชื่อต้นไม้ |
+| GET | `/api/rooms?status=waiting\|running\|finished` | รายการห้อง |
+| POST | `/api/rooms` | สร้างห้อง |
+| GET | `/api/rooms/{id}` | รายละเอียดห้อง (สมาชิก, เลือดบอส, ระยะต้นไม้) |
+| POST | `/api/rooms/{id}/join` · `start` · `leave` · `claim` | เข้า / เริ่ม (โฮสต์) / ขอตัวก่อน / เก็บผล |
+| GET | `/api/rooms/{id}/messages?after_id=0` | ข้อความแชท (หน้าเว็บดึงทุก 3 วินาที) |
+| POST | `/api/rooms/{id}/messages` | ส่งข้อความ `{body}` |
+| GET | `/api/bosses` · `/api/bosses/{id}` | แม่แบบบอส |
+| GET | `/api/friends` | เพื่อน + คำขอเข้า/ออก |
+| POST | `/api/friends/requests` | ส่งคำขอ `{user_id}` |
+| POST | `/api/friends/requests/{id}/accept` · `decline` | รับ / ปฏิเสธหรือยกเลิก |
+| DELETE | `/api/friends/{user_id}` | ลบเพื่อน |
+| GET | `/api/users/{id}/garden` | เยี่ยมสวนเพื่อน (เพื่อนเท่านั้น) |
+| PUT | `/api/admin/level` | แอดมินตั้งเลเวลตัวเอง `{level: 1–60}` |
+
+## ตารางในฐานข้อมูล
+
+| ตาราง | เก็บอะไร |
+|---|---|
+| `users` | บัญชี, EXP, ตัวละคร (JSON รวมสัตว์เลี้ยง), role, รับคำขอเพื่อนไหม, ธีมสวน |
+| `rooms` | ห้อง: เวลา, ต้นไม้, ธีม, แชท, เวลาพัก, บอสของห้อง (ชื่อ + HP), โบนัสเก็บผล |
+| `room_members` | ใครอยู่ห้องไหน + **ต้นไม้ในสวน** (ระยะ, ชื่อ, รดน้ำล่าสุด, การชุบชีวิต) |
+| `bosses` | แม่แบบบอส (Baby Pest 60, Pest Worm 120, Giant Pest 320 HP) |
+| `room_messages` | แชทในห้อง |
+| `friend_requests` | คำขอเป็นเพื่อน (pending / accepted) |
+
+## กฎเกม (components/Rules.php — ตรงกับ frontend/src/rules.js)
+
+- ห้องยาว 15–180 นาที (ห้องบอส 15–360) · ห้องบอสต้อง Lv.30+
+- EXP = นาทีที่โฟกัส ÷ 2 ปัดขึ้น · ออกก่อนครึ่งเวลา −2 (EXP ไม่ติดลบ)
+- เก็บผลภายใน 10 นาทีหลังจบ: ห้องธรรมดา + โบนัส (60 นาทีขึ้นไป +10, สั้นกว่านั้นสุ่ม 20% ได้ 1–10)
+  ห้องบอส + โบนัสเมื่อบอสตาย (นาที ÷ 10 ปัดขึ้น, 100 นาทีขึ้นไป ×2)
+- ต้นไม้: ห้องธรรมดาขึ้นระยะ 2 ที่ครึ่งเวลา ระยะ 3 เมื่ออยู่จนจบ · ห้องบอสขึ้นทุก ⅓ ของเลือด ร่างชนะเมื่อบอสตาย
+- บอสโดน 1 ดาเมจ ต่อนาทีโฟกัส ต่อคน · บอสเป็นของแต่ละห้อง
+- เวลาพัก (ห้อง 50 นาทีขึ้นไป): พักทุก ๆ น้อยกว่าเวลาห้อง เป็นเวลาไม่เกิน 20 นาที ไม่นับเป็นเวลาโฟกัส
+- โฮสต์ออก → โฮสต์ตกเป็นของคนที่เข้าห้องก่อนที่สุดที่ยังอยู่
+- สวน: ไม่รดน้ำเกิน 30 / 60 / 90 / 180 วัน (ระยะ 1 / 2 / 3 / ชนะบอส) ต้นตาย ·
+  รดน้ำ 5 วัน (คนละวัน) ภายใน 30 วัน ต้นฟื้น

@@ -1,0 +1,16 @@
+# Put this file at web/.htaccess (replaces Yii's default one).
+# /api/...      -> Yii (index.php)
+# real files    -> served as-is (React build, images)
+# anything else -> React app (index.html), so refreshing /room/5 works
+
+DirectoryIndex index.html index.php
+
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^api(/.*)?$ index.php [L]
+
+RewriteRule ^ index.html [L]

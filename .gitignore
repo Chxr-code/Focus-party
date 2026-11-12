@@ -1,0 +1,45 @@
+
+# IDE
+.idea/
+.vscode/
+nbproject/
+.buildpath
+.project
+.settings/
+
+# Windows / macOS
+Thumbs.db
+.DS_Store
+
+# Composer
+/vendor/
+/composer.phar
+
+# Runtime and generated assets
+/runtime/
+/web/assets/
+
+# Local environment and database credentials
+.env
+.env.*
+/config/db-local.php
+
+# PHPUnit
+/phpunit.phar
+/phpunit.xml
+/tests/_output/*
+/tests/_support/_generated/
+
+# Vagrant
+/.vagrant/
+
+# Logs
+*.log
+
+# Local config backups
+/config/*.backup
+
+# React (source lives in /frontend, the build goes to /web and IS committed)
+/frontend/node_modules/
+/frontend/.env
+!/.env.example

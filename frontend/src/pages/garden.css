@@ -1,0 +1,203 @@
+.garden-page { max-width: 900px; }
+.garden-top { margin-bottom: 16px; gap: 14px; }
+.garden-heading {
+  font-size: 16px;
+  color: var(--text-on-bg);
+  text-shadow: 2px 0 0 var(--ink), -2px 0 0 var(--ink), 0 2px 0 var(--ink), 0 -2px 0 var(--ink), 3px 3px 0 var(--ink);
+  overflow-wrap: anywhere;
+}
+.garden-sub, .visit-note {
+  margin: 6px 0 0;
+  color: var(--text-on-bg);
+  font-weight: 600;
+  text-shadow: 1px 0 0 var(--ink), -1px 0 0 var(--ink), 0 1px 0 var(--ink), 0 -1px 0 var(--ink), 2px 2px 0 var(--ink);
+}
+.visit-note { margin: -6px 0 12px; }
+
+/* ---------- garden view: horizontal track of sections, each keeps the drawing's 1448×1086 shape ---------- */
+.garden-view {
+  position: relative;
+  border: var(--px) solid var(--ink);
+  box-shadow: 5px 5px 0 0 var(--shadow);
+  margin-bottom: 18px;
+  background: #8cc152;
+}
+.garden-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+}
+.garden-section {
+  position: relative;
+  flex: 0 0 100%;
+  aspect-ratio: 1448 / 1086;
+  scroll-snap-align: start;
+  background: var(--scene-bg) center / 100% 100% no-repeat;
+  overflow: hidden;
+}
+@media (max-width: 800px) {
+  .garden-section { background-image: var(--scene-bg-sm); }
+}
+
+/* trees: the plot centre is where the art touches the ground (87.5% down) */
+.plant {
+  position: absolute;
+  width: 19%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  translate: -50% -87.5%;
+  filter: drop-shadow(2px 3px 0 rgba(40, 60, 20, 0.35));
+}
+.plant img {
+  width: 100%; height: 100%; display: block;
+  transform-origin: 50% 87.5%;
+  animation: sway 3.2s steps(4) infinite alternate;
+  animation-delay: inherit;
+}
+.plant.dead img { animation: none; }
+@keyframes sway { from { transform: rotate(-1.6deg); } to { transform: rotate(1.6deg); } }
+.watering .plant:not(.dead) img { animation: perk 0.5s steps(2) 3; }
+@keyframes perk { 50% { transform: scale(1.06, 0.95); } }
+.plant:hover img, .plant.selected img { scale: 1.07; }
+.plant.selected { filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 2px 0 #fff); }
+.plant:focus-visible { outline: 3px dashed var(--gold); outline-offset: 2px; }
+.plant-name {
+  position: absolute; left: 50%; top: 88%;
+  translate: -50% 0;
+  max-width: 120%;
+  font-family: var(--font-pixel); font-size: 7px;
+  background: var(--panel); color: var(--ink);
+  border: 2px solid var(--ink); padding: 2px 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: none;
+  z-index: 40;
+}
+.plant:hover .plant-name, .plant.selected .plant-name, .plant:focus-visible .plant-name { display: block; }
+.plant:hover, .plant.selected { z-index: 50 !important; }
+
+/* water drops falling on each tree */
+.rain { position: absolute; inset: 0 15% 20%; pointer-events: none; }
+.rain i {
+  position: absolute; top: 0;
+  width: 6%; aspect-ratio: 1 / 2;
+  background: #6fc3ff; border: 1px solid #2f6fc4;
+  animation: drop 0.55s linear infinite;
+}
+.rain i:nth-child(1) { left: 20%; animation-delay: 0s; }
+.rain i:nth-child(2) { left: 50%; animation-delay: -0.2s; }
+.rain i:nth-child(3) { left: 78%; animation-delay: -0.38s; }
+@keyframes drop { from { transform: translateY(-20%); opacity: 1; } to { transform: translateY(900%); opacity: 0; } }
+
+/* watering can (fixed in the corner while the garden scrolls) */
+.can-btn {
+  position: absolute; left: 2%; bottom: 3%;
+  width: 13%;
+  padding: 6px;
+  background: rgba(255, 243, 214, 0.9);
+  border: var(--px) solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--shadow);
+  cursor: pointer;
+  z-index: 30;
+}
+.can-btn img { width: 100%; display: block; transform-origin: 30% 70%; transition: transform 0.25s steps(2); }
+.can-btn:hover img { transform: rotate(-8deg); }
+.can-btn.pouring img { transform: rotate(-28deg); }
+.can-btn:focus-visible { outline: 3px dashed var(--blue); outline-offset: 2px; }
+.can-drops { position: absolute; right: -2%; top: 40%; width: 30%; height: 80%; pointer-events: none; }
+.can-drops i {
+  position: absolute; top: 0; width: 18%; aspect-ratio: 1 / 2;
+  background: #6fc3ff; border: 1px solid #2f6fc4;
+  animation: drop 0.5s linear infinite;
+}
+.can-drops i:nth-child(2) { left: 40%; animation-delay: -0.17s; }
+.can-drops i:nth-child(3) { left: 80%; animation-delay: -0.34s; }
+
+.garden-empty {
+  position: absolute; left: 50%; top: 58%;
+  transform: translate(-50%, -50%);
+  width: min(80%, 340px);
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  z-index: 30;
+}
+.garden-empty p { margin: 0 0 4px; }
+
+.field-arrow { position: absolute; top: 50%; translate: 0 -50%; z-index: 30; }
+.field-arrow.left { left: 6px; }
+.field-arrow.right { right: 6px; }
+.field-arrow:disabled { opacity: 0.4; }
+.field-count {
+  position: absolute; right: 8px; bottom: 8px; z-index: 30;
+  font-size: 8px; background: var(--panel); color: var(--ink);
+  border: var(--px) solid var(--ink); padding: 5px 7px;
+}
+
+/* ---------- info panel ---------- */
+.garden-info { min-height: 76px; display: flex; align-items: center; }
+.garden-info > * { width: 100%; }
+.info-row { display: flex; gap: 14px; align-items: flex-start; }
+.info-text { min-width: 0; flex: 1; }
+.info-text h3 { overflow-wrap: anywhere; }
+.info-text p { margin: 6px 0 0; }
+.info-tree { width: 64px; height: 64px; flex-shrink: 0; background: #c9f0c4; border: 3px solid var(--ink); }
+.health { font-size: 14px; }
+.health.dead { color: var(--red-dark); font-weight: 600; }
+.rename { display: flex; gap: 8px; margin-top: 10px; }
+.rename .input { flex: 1; min-width: 0; }
+
+/* ---------- pickers ---------- */
+.garden-bg { margin-top: 18px; }
+.garden-bg .theme-picker { grid-template-columns: repeat(6, 1fr); }
+.gtheme-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.gtheme-picker .theme-option { aspect-ratio: 4 / 3; position: relative; }
+.theme-option.locked { filter: grayscale(0.9) brightness(0.7); cursor: not-allowed; }
+.theme-option .lock {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-size: 8px; color: #fff;
+  text-shadow: 1px 1px 0 var(--ink), -1px -1px 0 var(--ink);
+  background: none; border: 0;
+}
+@media (max-width: 700px) {
+  .garden-bg .theme-picker { grid-template-columns: repeat(3, 1fr); }
+  .gtheme-picker { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .garden-top { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .plant-name { font-size: 6px; }
+  .can-btn { width: 16%; padding: 3px; }
+  .info-row { flex-direction: column; }
+}
+
+/* garden theme: scrollable row of small previews, name + status under each */
+.gtheme-row { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 4px 10px; scrollbar-width: thin; }
+.gtheme-card { flex: 0 0 190px; scroll-snap-align: start; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.gtheme-card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; border: var(--px) solid var(--ink); }
+.gtheme-card.using img { box-shadow: 0 0 0 3px var(--gold); }
+.gtheme-card.locked img { filter: grayscale(1) brightness(0.75); }
+.gtheme-name { font-weight: 600; font-size: 14px; }
+.gtheme-tag { font: 600 13px var(--font-body); border: 2px solid var(--ink); padding: 2px 10px; color: var(--ink); }
+.gtheme-tag.using { background: var(--gold); }
+.gtheme-tag.use { background: var(--green); color: #fff; text-shadow: 1px 1px 0 var(--ink); cursor: pointer; box-shadow: 2px 2px 0 var(--shadow); }
+.gtheme-tag.use:active { translate: 1px 1px; box-shadow: none; }
+.gtheme-tag.use:focus-visible { outline: 3px dashed var(--gold); outline-offset: 2px; }
+.gtheme-tag.lock { background: #ddd; color: #555; }
+.gtheme-hint { margin: 2px 0 0; font-size: 12px; }
+@media (max-width: 560px) { .gtheme-card { flex-basis: 130px; } .gtheme-name { font-size: 13px; } }
+
+/* owner's pet hanging out by the watering can */
+.garden-pet {
+  position: absolute; left: 16%; bottom: 4%;
+  z-index: 29;
+  animation: pet-hop 1.4s steps(2) infinite;
+  filter: drop-shadow(0 2px 0 rgba(40, 60, 20, 0.35));
+}
+@keyframes pet-hop { 50% { transform: translateY(-4px); } }
+@media (max-width: 560px) { .garden-pet { width: 32px; height: 32px; left: 19%; } }
+@media (min-width: 880px) { .gtheme-hint { display: none; } } /* all 4 fit, nothing to scroll */

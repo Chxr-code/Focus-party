@@ -1,0 +1,272 @@
+/* ---------- Thai in pixel headings (h1/h2 only) ----------
+   Press Start 2P has no Thai letters, so Thai characters fall through to "TA 8 bit" (a Thai pixel font
+   by TA Font), loaded only for the Thai range. Everything else Thai uses IBM Plex Sans Thai. */
+@font-face {
+  font-family: 'TA 8 bit Thai';
+  src: url('/fonts/ta8bit-thai.woff2') format('woff2');
+  unicode-range: U+0E00-0E7F;
+  size-adjust: 130%;
+  font-display: swap;
+}
+/* Small pixel labels (buttons, chips, tags) show Thai in IBM Plex Sans Thai instead — the 8-bit Thai font
+   is too hard to read at 7–11px. Bumped up so it sits level with Press Start 2P's big glyphs. */
+@font-face {
+  font-family: 'Plex Thai Px';
+  src: url('/fonts/plex-thai-600.woff2') format('woff2');
+  unicode-range: U+0E00-0E7F;
+  size-adjust: 145%;
+  font-display: swap;
+}
+
+/* ---------- Focus Party pixel theme ---------- */
+:root {
+  --bg: #6b9a45;          /* grass */
+  --bg-2: #63903f;        /* grass checker */
+  --panel: #fff3d6;       /* parchment */
+  --panel-2: #f0dcae;
+  --ink: #3b2417;         /* dark wood: outlines + text on panels */
+  --ink-soft: #7a5a44;
+  --text-on-bg: #fffbe8;
+  --shadow: #2c4a1e;      /* drop shadows on grass */
+  --green: #5cc85a;
+  --green-dark: #2f8a3a;
+  --red: #e5534b;
+  --red-dark: #9e2d2a;
+  --gold: #ffcf4a;
+  --gold-dark: #c98f12;
+  --blue: #59a7ff;
+  --px: 3px;              /* outline thickness */
+  --font-pixel: 'Press Start 2P', 'Plex Thai Px', monospace;       /* small labels */
+  --font-title: 'Press Start 2P', 'TA 8 bit Thai', monospace;      /* big headings only */
+  --font-body: 'IBM Plex Sans Thai', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background-color: var(--bg);
+  /* checkerboard grass tiles */
+  background-image:
+    linear-gradient(45deg, var(--bg-2) 25%, transparent 25%, transparent 75%, var(--bg-2) 75%),
+    linear-gradient(45deg, var(--bg-2) 25%, transparent 25%, transparent 75%, var(--bg-2) 75%);
+  background-size: 64px 64px;
+  background-position: 0 0, 32px 32px;
+  color: var(--text-on-bg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+img.pixelated, .pixelated { image-rendering: pixelated; }
+
+h1, h2, h3, .pixel {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+}
+h1 { font-size: 18px; margin: 0; }
+h2 { font-size: 13px; margin: 0; }
+h1, h2, .title-font { font-family: var(--font-title); }
+h3 { font-size: 11px; margin: 0; }
+
+/* ---------- panels ---------- */
+.panel {
+  background: var(--panel);
+  color: var(--ink);
+  border: var(--px) solid var(--ink);
+  box-shadow: 0 0 0 var(--px) var(--panel-2) inset, 5px 5px 0 0 var(--shadow);
+  padding: 16px;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  --c: var(--green);
+  --c-dark: var(--green-dark);
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  line-height: 1.4;
+  color: #fff;
+  text-shadow: 1px 1px 0 var(--ink);
+  background: var(--c);
+  border: var(--px) solid var(--ink);
+  box-shadow: inset -4px -4px 0 0 var(--c-dark), 3px 3px 0 0 var(--shadow);
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: transform 60ms;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { filter: brightness(1.08); }
+.btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: inset 4px 4px 0 0 var(--c-dark), 1px 1px 0 0 var(--shadow);
+}
+.btn:disabled { cursor: not-allowed; opacity: 0.85; }
+.btn:focus-visible { outline: 3px dashed var(--gold); outline-offset: 3px; }
+.btn.red { --c: var(--red); --c-dark: var(--red-dark); }
+.btn.gold { --c: var(--gold); --c-dark: var(--gold-dark); color: var(--ink); text-shadow: none; }
+.btn.ghost { --c: var(--panel-2); --c-dark: #d9c492; color: var(--ink); text-shadow: none; }
+.btn.small { font-size: 9px; padding: 7px 10px; }
+.btn.block { width: 100%; }
+
+/* ---------- inputs ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field label { font-family: var(--font-pixel); font-size: 9px; color: var(--ink-soft); }
+.input, select.input {
+  font: inherit;
+  color: var(--ink);
+  background: #fffdf6;
+  border: var(--px) solid var(--ink);
+  padding: 9px 10px;
+  width: 100%;
+  border-radius: 0;
+}
+.input:focus { outline: 3px solid var(--blue); outline-offset: 0; }
+.field-error { color: var(--red-dark); font-size: 13px; }
+
+/* ---------- chips & bars ---------- */
+.chip {
+  display: inline-block;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  padding: 5px 7px;
+  border: 2px solid var(--ink);
+  background: var(--panel-2);
+  color: var(--ink);
+}
+.chip.blue { background: #cfe5ff; }
+.chip.red { background: var(--red); color: #fff; }
+.chip.green { background: #c9f0c4; }
+
+.bar {
+  height: 14px;
+  border: var(--px) solid var(--ink);
+  background: #5b3a26;
+  position: relative;
+}
+.bar > span {
+  display: block;
+  height: 100%;
+  background: repeating-linear-gradient(90deg, var(--gold) 0 6px, #ffe08a 6px 8px);
+}
+
+/* ---------- layout ---------- */
+.container { max-width: 1040px; margin: 0 auto; padding: 20px 16px 48px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.spacer { flex: 1; }
+.muted { color: var(--ink-soft); }
+.error-box {
+  background: #ffd9d6;
+  color: var(--red-dark);
+  border: var(--px) solid var(--red-dark);
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+/* ---------- modal ---------- */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(10, 12, 30, 0.75);
+  display: grid; place-items: center;
+  padding: 16px;
+  z-index: 50;
+}
+.modal { width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- drawn page background ----------
+   A fixed layer behind everything (background-attachment: fixed doesn't work on iPhone). */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg) var(--page-bg, url('/bg/web.webp')) center / cover no-repeat;
+  transition: background-image 0.4s;
+}
+@media (max-width: 800px) {
+  body::before { background-image: var(--page-bg-sm, url('/bg/web-sm.webp')); }
+}
+/* text sitting straight on the picture needs a stronger outline */
+.on-bg {
+  color: var(--text-on-bg);
+  text-shadow: 2px 0 0 var(--ink), -2px 0 0 var(--ink), 0 2px 0 var(--ink), 0 -2px 0 var(--ink), 3px 3px 0 var(--ink);
+}
+
+
+/* Thai needs more room for vowels and tone marks above/below the line */
+:lang(th) h1, :lang(th) h2, :lang(th) h3, :lang(th) .pixel { line-height: 1.9; }
+
+/* ---------- top-right controls ---------- */
+.topbar {
+  position: fixed; top: 12px; right: 14px; z-index: 60;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.container { padding-top: 64px; }
+/* all three top-right buttons share one height, whatever is inside them */
+.topbar .btn { height: 36px; padding-top: 0; padding-bottom: 0; display: inline-flex; align-items: center; justify-content: center; }
+.topbar .music > .btn { width: 46px; padding: 0; }
+.lang-btn span { opacity: 0.45; }
+.lang-btn span.on { opacity: 1; }
+.music { position: relative; }
+.music-panel {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  width: 220px; padding: 12px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.music-switch { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.music-switch input { width: 18px; height: 18px; accent-color: var(--green); }
+.music-volume { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; }
+.music-volume .pixel { font-size: 8px; grid-column: 1 / -1; color: var(--ink-soft); }
+.music-volume input { width: 100%; accent-color: var(--gold-dark); }
+.vol-num { font-size: 8px; min-width: 34px; text-align: right; }
+@media (max-width: 560px) {
+  .topbar { top: 8px; right: 8px; gap: 6px; }
+}
+
+/* ---------- pixel icons ---------- */
+.ico { width: 16px; height: 16px; image-rendering: pixelated; vertical-align: -3px; margin-right: 4px; }
+
+/* ---------- notification badge ---------- */
+.badge-wrap { position: relative; }
+.badge {
+  position: absolute; top: -9px; right: -9px;
+  min-width: 18px; height: 18px; padding: 0 4px;
+  background: var(--red); color: #fff;
+  border: 2px solid var(--ink);
+  font-size: 9px; line-height: 14px; text-align: center;
+}
+
+/* ---------- background / theme picker ---------- */
+.theme-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.theme-option {
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  border: var(--px) solid var(--ink);
+  background-size: cover; background-position: center;
+  cursor: pointer;
+  display: flex; align-items: flex-end;
+}
+.theme-option .pixel {
+  width: 100%;
+  font-size: 7px;
+  padding: 3px 2px;
+  background: var(--panel);
+  color: var(--ink);
+  border-top: 2px solid var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.theme-option.selected { outline: 3px solid var(--gold); outline-offset: 2px; }
+.theme-option.selected .pixel { background: var(--gold); }
+.theme-option:focus-visible { outline: 3px dashed var(--blue); outline-offset: 2px; }
+
+/* ---------- switch row ---------- */
+.switch-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.speaker-ico { display: block; }
+.break-select { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--ink-soft); }
