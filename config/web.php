@@ -5,6 +5,13 @@ require_once __DIR__ . '/env.php';
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+// Speed (matters a lot when the database is far away):
+// - remember table structures instead of asking the database on every request (12 queries saved per call)
+// - keep the encrypted connection open between requests instead of reconnecting each time
+// Migrations run in the console app, which doesn't use these, and every deploy starts with an empty cache.
+$db['enableSchemaCache'] = YII_ENV_PROD;
+$db['schemaCacheDuration'] = 3600;
+$db['attributes'] = ($db['attributes'] ?? []) + [PDO::ATTR_PERSISTENT => YII_ENV_PROD];
 
 $config = [
     'id' => 'focus-party',

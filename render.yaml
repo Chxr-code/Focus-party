@@ -3,6 +3,7 @@ services:
   - type: web
     name: focus-party
     runtime: docker
+    region: singapore      # same region as the TiDB database: every query stays close
     plan: free
     healthCheckPath: /api/test
     envVars:
