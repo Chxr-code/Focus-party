@@ -1,0 +1,18 @@
+# Render Blueprint: New -> Blueprint -> pick this repo
+services:
+  - type: web
+    name: focus-party
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/test
+    envVars:
+      - key: DB_DSN            # mysql:host=<tidb host>;port=4000;dbname=focus_party
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL            # TiDB Cloud only accepts encrypted connections
+        value: "true"
+      - key: COOKIE_VALIDATION_KEY
+        generateValue: true

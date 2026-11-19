@@ -92,11 +92,11 @@ export default function Login() {
           {mode === 'login' ? t('login.to_register') : t('login.to_login')}
         </button>
 
-        {USE_MOCK && (
-          <p className="muted" style={{ fontSize: 13, marginBottom: 0 }}>
-            {t('login.mock', { u: 'august', p: 'password123' })}
-          </p>
-        )}
+        <p className="muted" style={{ fontSize: 13, marginBottom: 0 }}>
+          {USE_MOCK
+            ? t('login.mock', { u: 'august', p: 'password123' })
+            : t('login.demo', { u: 'focus_demo1', p: 'Focus1234' })}
+        </p>
       </form>
     </div>
   );

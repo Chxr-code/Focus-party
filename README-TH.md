@@ -1,4 +1,4 @@
-# Focus Party — Yii2 API + React (โปรเจกต์เดียวจบ)
+# Focus Party — Yii2 API + React (คู่มือภาษาไทย)
 
 ```
 focus-party/
@@ -66,26 +66,50 @@ npm run build
 ไฟล์ไปอยู่ใน `web/` (`web/index.html`, `web/app/`, รูป, เพลง) **ต้อง commit ด้วย** เพราะเซิร์ฟเวอร์ไม่มี Node
 `npm run build` ต่อ API จริงเองอัตโนมัติ
 
-## 3. Deploy ขึ้นเซิร์ฟเวอร์วิชา
+## 3. เอาขึ้น GitHub (ใช้ชื่อเราเป็นคน commit จะได้ขึ้นในโปรไฟล์)
 
+**แบบ GitHub Desktop (ง่ายสุด)**
+1. File → **Add local repository** → เลือกโฟลเดอร์ `focus-party` → จะขึ้นว่ายังไม่ใช่ repo ให้กด **create a repository**
+2. ช่อง Summary พิมพ์ `Focus Party` → กด **Commit to main**
+3. กด **Publish repository** (เอาติ๊ก Keep this code private ออก ถ้าจะโชว์ในพอร์ต)
+
+**แบบพิมพ์คำสั่ง**
 ```bash
+git init -b main
 git add .
-git commit -m "Focus Party v2"
-git push deploy main
+git commit -m "Focus Party"
+git remote add origin https://github.com/<ชื่อเรา>/focus-party.git
+git push -u origin main
 ```
 
-บนเซิร์ฟเวอร์ต้องมี:
-1. ไฟล์ `.env` (ไม่ได้ขึ้น git) ใส่รหัสฐานข้อมูลของเซิร์ฟเวอร์ และ**ไม่ต้องใส่** `APP_ENV=dev`
-2. `composer install --no-dev` ถ้าเซิร์ฟเวอร์ไม่รันให้ตอน push
-3. `php yii migrate --interactive=0` ถ้าเซิร์ฟเวอร์ไม่รันให้ตอน push
+ไฟล์ `.env` จะไม่ขึ้น GitHub (กันไว้ใน `.gitignore` แล้ว)
 
-ถ้าฐานข้อมูลบนเซิร์ฟเวอร์มีตารางเก่าของเพื่อนอยู่แล้ว ไม่เป็นไร migrate จะเพิ่มเฉพาะ 2 ตัวใหม่
-(`m261112_120000_focus_party_v2` กับ `m261112_120100_seed_focus_party_v2`) ข้อมูลเดิมไม่หาย
+## 4. Deploy ฟรี: Render (เว็บ) + TiDB Cloud (ฐานข้อมูล)
 
-`web/.htaccess` ตั้งไว้แล้ว: `/api/...` ไป Yii, ไฟล์จริงเปิดตรง, หน้าอื่นไป React (รีเฟรช `/room/5` ไม่ 404)
+**ฐานข้อมูล: TiDB Cloud** (ฟรี ไม่ต้องใช้บัตร ใช้คำสั่งแบบ MySQL ได้)
+1. สมัคร https://tidbcloud.com → สร้าง **Starter** (ฟรี) เลือก region ใกล้ไทย เช่น Singapore
+2. เปิด **SQL Editor** พิมพ์ `CREATE DATABASE focus_party;` แล้วกดรัน
+3. กด **Connect** จดค่า Host, Port (4000), User (หน้าตาแบบ `xxxx.root`), Password
+
+**เว็บ: Render**
+1. สมัคร https://render.com ด้วยบัญชี GitHub
+2. **New → Blueprint** → เลือก repo `focus-party` (Render อ่าน `render.yaml` เอง)
+3. กรอก 3 ช่อง:
+   - `DB_DSN` = `mysql:host=<Host จาก TiDB>;port=4000;dbname=focus_party`
+   - `DB_USERNAME` = User จาก TiDB
+   - `DB_PASSWORD` = Password จาก TiDB
+4. กด Apply รอ build ประมาณ 5 นาที ตอนเริ่มระบบจะสร้างตารางกับข้อมูลตัวอย่างให้เอง
+5. เปิดลิงก์ที่ Render ให้ (`https://focus-party-xxxx.onrender.com`) ต่อท้าย `/api/test` ต้องเห็น `Focus Party API is running!`
+
+หลังจากนี้ทุกครั้งที่ push ขึ้น GitHub (branch main) Render จะ deploy ใหม่ให้เอง
+ถ้าแก้หน้าเว็บ อย่าลืม `npm run build` ก่อน commit
+
+**ข้อควรรู้**
+- Render ฟรีจะหลับถ้าไม่มีคนเข้า 15 นาที คนแรกที่เข้าต้องรอประมาณ 1 นาที (ก่อนส่งลิงก์ให้ใครดู เปิดทิ้งไว้ก่อน)
+- ห้ามเอา `.env` ขึ้น GitHub (ตั้งไว้ใน `.gitignore` แล้ว) รหัสฐานข้อมูลใส่ใน Render อย่างเดียว
 
 ### เช็คหลัง deploy
-- [ ] เปิด `/api/test` เห็น `Focus Party API is running!`
+- [ ] `/api/test` เห็น `Focus Party API is running!`
 - [ ] หน้า Login ไม่มีบรรทัด "Mock mode"
 - [ ] ล็อกอิน `admin` / `Admin1234` ได้ แล้วเปิดห้อง → อีกเครื่องจอยได้ → เริ่ม → แชทเห็นกัน
 - [ ] รีเฟรชหน้าห้อง / สวน ไม่ขึ้น 404

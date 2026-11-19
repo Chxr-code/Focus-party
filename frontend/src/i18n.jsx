@@ -31,6 +31,7 @@ const STRINGS = {
     'login.to_register': 'NEW HERE? REGISTER',
     'login.to_login': 'HAVE AN ACCOUNT? LOGIN',
     'login.mock': 'Mock mode — try {u} / {p}',
+    'login.demo': 'Just looking? Demo account: {u} / {p}',
 
     'bar.garden': 'GARDEN',
     'bar.friends': 'FRIENDS',
@@ -255,6 +256,7 @@ const STRINGS = {
     'login.to_register': 'ยังไม่มีบัญชี? สมัคร',
     'login.to_login': 'มีบัญชีแล้ว? เข้าสู่ระบบ',
     'login.mock': 'โหมดทดสอบ — ลอง {u} / {p}',
+    'login.demo': 'อยากลองเล่น? บัญชีตัวอย่าง {u} / {p}',
 
     'bar.garden': 'สวน',
     'bar.friends': 'เพื่อน',

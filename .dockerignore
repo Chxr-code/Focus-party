@@ -1,0 +1,9 @@
+.git
+.env
+vendor
+runtime/*
+web/assets/*
+frontend/node_modules
+tests
+vagrant
+*.log

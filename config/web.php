@@ -1,11 +1,7 @@
 <?php
 
 require dirname(__DIR__) . '/vendor/autoload.php';
-
-if (class_exists(\Dotenv\Dotenv::class)) {
-    $dotenv = \Dotenv\Dotenv::createImmutable(dirname(__DIR__));
-    $dotenv->safeLoad();
-}
+require_once __DIR__ . '/env.php';
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
@@ -37,7 +33,7 @@ $config = [
 
         // Request configuration
         'request' => [
-            'cookieValidationKey' => $_ENV['COOKIE_VALIDATION_KEY']
+            'cookieValidationKey' => env('COOKIE_VALIDATION_KEY')
                 ?? throw new \RuntimeException('COOKIE_VALIDATION_KEY is missing'),
             'parsers' => [
                 'application/json' => \yii\web\JsonParser::class,
