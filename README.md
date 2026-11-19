@@ -1,4 +1,5 @@
 # Focus Party
+https://focus-party.onrender.com/login
 
 A pixel-art **co-focus game**: study together in shared rooms, grow a tree with everyone who stays focused,
 and fight a pest that attacks your tree. Every focused minute counts. Leave early and your tree (and your EXP) pays for it.
